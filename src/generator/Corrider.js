@@ -20,11 +20,9 @@ const prototype = {
     const r1p0 = rooms[1][altTranslate.plane0];
     const r1p1 = rooms[1][altTranslate.plane1];
 
-    //console.log(r1p0 + "-" + r1p1, r0p0 + "-" + r0p1);
-
     let max = Math.min(r0p1, r1p1);
     let min = Math.max(r0p0, r1p0);
-;
+
     if(connection.strict){
       min += cf.strict_buffer;
       max -= cf.strict_buffer;
@@ -58,7 +56,9 @@ const prototype = {
       const r0p0 = side0Node._room[translate.plane0];
       const r0p1 = side0Node._room[translate.plane1];
 
+
       sideNodes[1].forEach((side1Node) => {
+
         const r1p0 = side1Node._room[translate.plane0];
         const r1p1 = side1Node._room[translate.plane1];
 

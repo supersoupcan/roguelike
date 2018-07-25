@@ -46,16 +46,31 @@ Split.prototype = {
       }
     }
   },
-  randSplitBody : function(game_body, min_section_size){
+  createSplit(gamebody, length){
+    const canSplitX = (gamebody.width >= length);
+    const canSplitY = (gamebody.height >= length);
+
+    if(canSplitX || canSplitY){
+      if(canSplitX && canSplitY){
+        return new Split();
+      }else if(canSplitX){
+         return new Split('x');
+      }else if(canSplitY){
+        return new Split('y');
+      }
+    }else {
+      return false;
+    }
+  },
+  randSplitBody : function(game_body, min0, min1){
     const translate = this.translate;
-
     const length = game_body[translate.planeLength];
+  
+    length - min0 - min1;
 
-    let splitLength = Math.floor(
-      length/2 + (Math.random() - 1/2) * (length - min_section_size * 2)
-    )
+    let splitLength = min0 + Math.floor(Math.random() * (length - min0 - min1));
 
-    let body0 = game_body.constructorArgvs(); 
+    let body0 = game_body.constructorArgvs();
     body0[translate.planeLength] = splitLength;
 
     let body1 = game_body.constructorArgvs();

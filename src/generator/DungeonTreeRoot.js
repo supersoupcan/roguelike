@@ -1,4 +1,5 @@
 import DungeonTreeNode from "./DungeonTreeNode";
+import Room from "./Room";
 
 const DungeonTreeRoot = function(gamebody){
   DungeonTreeNode.call(this, gamebody, "");
@@ -8,8 +9,12 @@ const DungeonTreeRoot = function(gamebody){
 const prototype = {
   connectTree : function(cf){
     this.traversePostOrder((node) => {
-      node.connectChildren(cf);
+      if(!node.connectChildren(cf)) console.log('catastrophy');
     }, (node) => node._children.length === 2);
+    return true;
+  },
+  analyze : function(cf){
+    return true;
   }
 }
 

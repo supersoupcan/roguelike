@@ -1,6 +1,6 @@
 import GameBody from '../GameBody';
-import Split from './Split';
 import Room from './Room';
+import Split from './Split';
 import utils from '../utils';
 import Corrider from './Corrider';
 
@@ -9,47 +9,31 @@ const DungeonTreeNode = function(gamebody, name){
   this._split = null;
   this._room = null;
   this._corrider = null;
-  this._name = name;
+  this._name = name; 
   this._children = [];
 }
 
 const prototype = {
-  recursiveGenerate : function(cf){
-    const randSectionSize = utils.randIntBetween(
-      cf.min_section_size, cf.max_section_size
+  recursiveGenerate : function(layout){
+    this._split = Split.prototype.createSplit(
+      this, layout.randomSections.reduce((prev, cur) => prev + cur)
     );
-    
-    function canSplit(length){
-      return length >= randSectionSize * 2;
-    }
 
     this._children = [];
 
-    const canSplitX = canSplit(this.width);
-    const canSplitY = canSplit(this.height);
-
-    if(canSplitX || canSplitY){
-      if(canSplitX && canSplitY){
-        this._split = new Split();
-      }else if(canSplitX){
-        this._split = new Split('x');
-      }else if(canSplitY){
-        this._split = new Split('y');
-      }
-
-      const splitBodies = this._split.randSplitBody(
-        this, cf.min_section_size
-      );
-
+    if(this._split === false){
+      this._room = new Room();
+      this._room.generate(this, layout.roomCf());
+    }else{
+      const splitBodies = this._split.randSplitBody(this, 
+        layout.amass('min_section_size', layout._data[0]),
+        layout.amass('min_section_size', layout._data[1])
+      )
       splitBodies.forEach((split, index) => {
         let node = new DungeonTreeNode(split, this._name + index);
         this._children.push(node);
-        node.recursiveGenerate(cf);
+        node.recursiveGenerate(layout.getSubLayout(index));
       })
-
-    }else{
-      this._room = new Room();
-      this._room.generate(this, cf);
     }
   },
   getChildrenOnEdge(plane, index){
@@ -68,16 +52,21 @@ const prototype = {
       if(child._children.length === 0){
         return [child];
       }else{
-        return child.getChildrenOnEdge(
+        let children = child.getChildrenOnEdge(
           this._split.plane, (index + 1) % 2
         )
+
+        return children.filter((child) => {
+          return !child._room._endroom;
+        });
       }
     });
 
     this._corrider = new Corrider(this);
     if(!this._corrider.determineRooms(sideNodes, cf)){
-      console.log('FATAL ERROR!');
+      return false;
     }
+    return true;
   },
   traversePostOrder : function(cb, cbFilter, recurseFilter){
     (function recurse(parent){

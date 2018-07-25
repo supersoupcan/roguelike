@@ -35,6 +35,7 @@ Size.prototype = {
 const GameBody = function(x0, y0, width, height){
   this._pos = new Position(x0, y0);
   this._size = new Size(width, height)
+  this.color = 0x000000;
 }
  
 

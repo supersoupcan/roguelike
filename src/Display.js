@@ -22,16 +22,16 @@ Display.prototype = {
     document.body.appendChild(this._engine.view);
   },
   drawDebugGameBodies(game_bodies){
-    this._debug.lineStyle(1, 0x000000);
     game_bodies.forEach((gamebody) => {
+      this._debug.lineStyle(1, gamebody.color);
       this._debug.drawRect(
         gamebody.x0 * this.scale,
         gamebody.y0 * this.scale,
         gamebody.width * this.scale,
         gamebody.height * this.scale,
       );
+      this._debug.endFill();
     })
-    this._debug.endFill();
   }
 }
 

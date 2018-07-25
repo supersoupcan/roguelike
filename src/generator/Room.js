@@ -3,12 +3,17 @@ import utils from '../utils';
 
 const Room = function(){
   GameBody.call(this);
-  this._role = 'STANDARD';
+  this._type = null;
+  this._endroom = 
   this._corriders = [];
 }
 
 const prototype = {
   generate : function(node, cf){
+    this._type = cf.type;
+    this.color = cf.color;
+    this._endroom = cf.endroom;
+
     const width = utils.randIntBetween(cf.min_room_size, node.width);
     const height = utils.randIntBetween(cf.min_room_size, node.height);
 
